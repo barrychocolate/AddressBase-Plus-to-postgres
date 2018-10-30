@@ -1,7 +1,6 @@
 --This code creates a table and associated function, trigger and indexes to allow you to load the AddressBase islands data into it
 --The key difference between the AdressBase Plus and AddressBase islands is that the X_coordinate and y_coordinate may be null
 --We therfor use the lat and long to create the geomotry for this data
-
 -- Create the destination schema if required
 CREATE SCHEMA IF NOT EXISTS os_address;
 
@@ -12,7 +11,7 @@ RETURNS trigger AS $$
 BEGIN
   -- The geometry
   -- Set it based on the x_coord and y_coord fields
-  NEW.geom = ST_SetSRID(ST_MakePoint(NEW.LATITUDE, NEW.LONGITUDE), 4326);
+  NEW.geom = ST_SetSRID(ST_MakePoint(NEW.LONGITUDE, NEW.LATITUDE), 4326);
   -- The full address
   -- Initialise it
   NEW.full_address = '';
