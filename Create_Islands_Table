@@ -1,0 +1,168 @@
+--This code creates a table and associated function, trigger and indexes to allow you to load the AddressBase islands data into it
+--The key difference between the AdressBase Plus and AddressBase islands is that the X_coordinate and y_coordinate may be null
+--We therfor use the lat and long to create the geomotry for this data
+
+-- Create the destination schema if required
+CREATE SCHEMA IF NOT EXISTS os_address;
+
+-- Create a function which will populate the full_address and geom columns as 
+-- data are imported
+CREATE OR REPLACE FUNCTION create_geom_and_island_address()
+RETURNS trigger AS $$
+BEGIN
+  -- The geometry
+  -- Set it based on the x_coord and y_coord fields
+  NEW.geom = ST_SetSRID(ST_MakePoint(NEW.LATITUDE, NEW.LONGITUDE), 4326);
+  -- The full address
+  -- Initialise it
+  NEW.full_address = '';
+  -- Build the full address by only including optional address components if they 
+  -- exist
+  IF NEW.RM_ORGANISATION_NAME IS NOT NULL AND length(NEW.RM_ORGANISATION_NAME) > 0 THEN
+	NEW.full_address = NEW.full_address || NEW.RM_ORGANISATION_NAME || ', ';
+  END IF;
+  IF NEW.department_name IS NOT NULL AND length(NEW.department_name) > 0 THEN
+	NEW.full_address = NEW.full_address || NEW.department_name || ', ';
+  END IF;
+  IF NEW.po_box_number IS NOT NULL AND length(NEW.po_box_number) > 0 THEN
+	NEW.full_address = NEW.full_address || NEW.po_box_number || ', ';
+  END IF;
+  IF NEW.sub_building_name IS NOT NULL AND length(NEW.sub_building_name) > 0 THEN
+	NEW.full_address = NEW.full_address || NEW.sub_building_name || ', ';
+  END IF;
+  IF NEW.building_name IS NOT NULL AND length(NEW.building_name) > 0 THEN
+	NEW.full_address = NEW.full_address || NEW.building_name || ', ';
+  END IF;
+  IF NEW.building_number IS NOT NULL THEN
+	NEW.full_address = NEW.full_address || NEW.building_number || ', ';
+  END IF;
+  IF NEW.dependent_thoroughfare IS NOT NULL AND length(NEW.dependent_thoroughfare) > 0 THEN
+	NEW.full_address = NEW.full_address || NEW.dependent_thoroughfare || ', ';
+  END IF;
+  IF NEW.thoroughfare IS NOT NULL AND length(NEW.thoroughfare) > 0 THEN
+	NEW.full_address = NEW.full_address || NEW.thoroughfare || ', ';
+  END IF;
+
+  NEW.full_address = NEW.full_address || NEW.post_town || ', ';
+
+  IF NEW.double_dependent_locality IS NOT NULL AND length(NEW.double_dependent_locality) > 0 THEN
+	NEW.full_address = NEW.full_address || NEW.double_dependent_locality || ', ';
+  END IF;
+  IF NEW.dependent_locality IS NOT NULL AND length(NEW.dependent_locality) > 0 THEN
+	NEW.full_address = NEW.full_address || NEW.dependent_locality || ', ';
+  END IF;
+
+  NEW.full_address = NEW.full_address || NEW.postcode;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE TABLE os_address.addressbase_islands
+(
+id serial NOT NULL,
+UPRN bigint NOT NULL,
+UDPRN int  NULL,
+CHANGE_TYPE char(1) NOT NULL,
+STATE int  NULL,
+STATE_DATE date NULL,
+CLASS char(6) NOT NULL,
+PARENT_UPRN bigint  NULL,
+X_COORDINATE float  NULL,
+Y_COORDINATE float NULL,
+LATITUDE float NOT NULL,
+LONGITUDE float NOT NULL,
+RPC int  NOT NULL,
+LOCAL_CUSTODIAN_CODE smallint  NOT NULL,
+COUNTRY char(1) NOT NULL,
+LA_START_DATE date NOT NULL,
+LAST_UPDATE_DATE date NOT NULL,
+ENTRY_DATE date NOT NULL,
+RM_ORGANISATION_NAME varchar(60) NOT NULL,
+LA_ORGANISATION varchar(100) NULL,
+DEPARTMENT_NAME varchar(60) NULL,
+LEGAL_NAME varchar(60) NULL,
+SUB_BUILDING_NAME varchar(30) NULL,
+BUILDING_NAME varchar(50) NULL,
+BUILDING_NUMBER smallint NULL,
+SAO_START_NUMBER smallint  NULL,
+SAO_START_SUFFIX char(2) NULL,
+SAO_END_NUMBER smallint NULL,
+SAO_END_SUFFIX varchar(2) NULL,
+SAO_TEXT varchar(90) NULL,
+ALT_LANGUAGE_SAO_TEXT varchar(90) NULL,
+PAO_START_NUMBER smallint NULL,
+PAO_START_SUFFIX char(2) NULL,
+PAO_END_NUMBER smallint NULL,
+PAO_END_SUFFIX char(2)  NULL,
+PAO_TEXT varchar(90)  NULL,
+ALT_LANGUAGE_PAO_TEXT varchar(90)  NULL,
+USRN int NOT NULL,
+USRN_MATCH_INDICATOR int NOT NULL,
+AREA_NAME varchar(40) NULL,
+LEVEL varchar(30) NULL,
+OFFICIAL_FLAG char(1) NULL,
+OS_ADDRESS_TOID varchar(20) NULL,
+OS_ADDRESS_TOID_VERSION smallint NULL,
+OS_ROADLINK_TOID varchar(20) NULL,
+OS_ROADLINK_TOID_VERSION smallint NULL,
+OS_TOPO_TOID varchar(20) NULL,
+OS_TOPO_TOID_VERSION smallint NULL,
+VOA_CT_RECORD bigint NULL,
+VOA_NDR_RECORD bigint NULL,
+STREET_DESCRIPTION varchar(100) NOT NULL,
+ALT_LANGUAGE_STREET_DESCRIPTION varchar(100) NULL,
+DEPENDENT_THOROUGHFARE varchar(80) NULL,
+THOROUGHFARE varchar(80) NULL,
+WELSH_DEPENDENT_THOROUGHFARE varchar(80) NULL,
+WELSH_THOROUGHFARE varchar(80) NULL,
+DOUBLE_DEPENDENT_LOCALITY varchar(35) NULL,
+DEPENDENT_LOCALITY varchar(35) NULL,
+LOCALITY varchar(35) NULL,
+WELSH_DEPENDENT_LOCALITY varchar(35) NULL,
+WELSH_DOUBLE_DEPENDENT_LOCALITY varchar(35) NULL,
+TOWN_NAME varchar(30) NULL,
+ADMINISTRATIVE_AREA varchar(30) NOT NULL,
+POST_TOWN varchar(35) NULL,
+WELSH_POST_TOWN varchar(30) NULL,
+POSTCODE char(8) NULL,
+POSTCODE_LOCATOR char(8) NOT NULL,
+POSTCODE_TYPE char(1) NULL,
+DELIVERY_POINT_SUFFIX char(2) NULL,
+ADDRESSBASE_POSTAL char(1) NOT NULL,
+PO_BOX_NUMBER varchar(6) NULL,
+WARD_CODE varchar(9) NULL,
+PARISH_CODE varchar(9) NULL,
+RM_START_DATE date NULL,
+MULTI_OCC_COUNT smallint NULL,
+VOA_NDR_P_DESC_CODE char(5) NULL,
+VOA_NDR_SCAT_CODE char(4) NULL,
+ALT_LANGUAGE char(3)  NULL,
+full_address text COLLATE pg_catalog."default" NOT NULL,
+geom geometry(Point,4326) NOT NULL,
+CONSTRAINT addressbase_island_pkey PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+
+-- Create a pg_trgm index on the full_address column
+-- This will allow super-fast, case-insensitive search on the column
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE INDEX addressbase__islands_full_address_gin_trgm
+  ON os_address.addressbase_islands
+  USING gin
+  ("full_address" gin_trgm_ops);
+
+-- Spatial index for the geometry column 
+CREATE INDEX addressbase_islands_geom_gist
+  ON os_address.addressbase_islands
+  USING gist
+  (geom);
+
+-- trigger to create points and addresses
+-- This trigger will be executed on each row inserted, calling the function defined above
+CREATE TRIGGER tr_create_geom_and_island_address BEFORE INSERT
+  ON os_address.addressbase_islands
+  FOR EACH ROW
+  EXECUTE PROCEDURE create_geom_and_island_address();
