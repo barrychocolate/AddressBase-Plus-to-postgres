@@ -8,7 +8,7 @@ RETURNS trigger AS $$
 BEGIN
   -- The geometry
   -- Set it based on the x_coord and y_coord fields
-  NEW.geom = ST_SetSRID(ST_MakePoint(NEW.LONGITUDE, NEW.LATITUDE), 4326);
+  NEW.geom = ST_SetSRID(ST_MakePoint(NEW.LONGITUDE, NEW.LATITUDE), 4258);
   -- The full address
   -- Initialise it
   NEW.full_address = '';
@@ -137,7 +137,7 @@ VOA_NDR_P_DESC_CODE char(5) NULL,
 VOA_NDR_SCAT_CODE char(4) NULL,
 ALT_LANGUAGE char(3)  NULL,
 full_address text COLLATE pg_catalog."default" NOT NULL,
-geom geometry(Point,4326) NOT NULL,
+geom geometry(Point,4258) NOT NULL,
 CONSTRAINT addressbase_pkey PRIMARY KEY (id)
 )
 WITH (
