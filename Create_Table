@@ -32,13 +32,15 @@ BEGIN
   IF NEW.building_number IS NOT NULL THEN
 	NEW.full_address = NEW.full_address || NEW.building_number || ', ';
   END IF;
-  IF NEW.dependent_thoroughfare IS NOT NULL AND length(NEW.dependent_thoroughfare) > 0 THEN
-	NEW.full_address = NEW.full_address || NEW.dependent_thoroughfare || ', ';
+  IF NEW.SAO_TEXT IS NOT NULL AND length(NEW.SAO_TEXT) > 0 THEN
+	NEW.full_address = NEW.full_address || NEW.SAO_TEXT || ', ';
   END IF;
-  IF NEW.thoroughfare IS NOT NULL AND length(NEW.thoroughfare) > 0 THEN
-	NEW.full_address = NEW.full_address || NEW.thoroughfare || ', ';
+  IF NEW.PAO_TEXT IS NOT NULL AND length(NEW.PAO_TEXT) > 0 THEN
+	NEW.full_address = NEW.full_address || NEW.pao_text || ', ';
   END IF;
-
+  IF NEW.STREET_DESCRIPTION IS NOT NULL AND length(NEW.STREET_DESCRIPTION) > 0 THEN
+	NEW.full_address = NEW.full_address || NEW.STREET_DESCRIPTION || ', ';
+  END IF;
   NEW.full_address = NEW.full_address || NEW.post_town || ', ';
 
   IF NEW.double_dependent_locality IS NOT NULL AND length(NEW.double_dependent_locality) > 0 THEN
