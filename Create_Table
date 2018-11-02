@@ -32,16 +32,23 @@ BEGIN
   IF NEW.building_number IS NOT NULL THEN
 	NEW.full_address = NEW.full_address || NEW.building_number || ', ';
   END IF;
-  IF NEW.SAO_TEXT IS NOT NULL AND length(NEW.SAO_TEXT) > 0 THEN
-	NEW.full_address = NEW.full_address || NEW.SAO_TEXT || ', ';
+  IF NEW.sao_text IS NOT NULL AND length(NEW.sao_text) > 0 AND length(NEW.sub_building_name) = 0 AND length(NEW.building_name) = 0 THEN
+	NEW.full_address = NEW.full_address || NEW.sao_text || ', ';
   END IF;
-  IF NEW.PAO_TEXT IS NOT NULL AND length(NEW.PAO_TEXT) > 0 THEN
+  IF NEW.pao_text IS NOT NULL AND length(NEW.pao_text) > 0 AND length(NEW.sub_building_name) = 0 AND length(NEW.building_name) = 0 THEN
 	NEW.full_address = NEW.full_address || NEW.pao_text || ', ';
   END IF;
-  IF NEW.STREET_DESCRIPTION IS NOT NULL AND length(NEW.STREET_DESCRIPTION) > 0 THEN
-	NEW.full_address = NEW.full_address || NEW.STREET_DESCRIPTION || ', ';
+  IF NEW.pao_start_number IS NOT NULL AND length(NEW.pao_start_suffix) > 0 AND length(NEW.building_name) = 0 AND NEW.building_number IS NULL THEN
+	NEW.full_address = NEW.full_address || NEW.pao_start_number || NEW.pao_start_suffix || ', ';
   END IF;
-  NEW.full_address = NEW.full_address || NEW.post_town || ', ';
+  IF NEW.pao_start_number IS NOT NULL AND length(NEW.pao_start_suffix) = 0 AND length(NEW.building_name) = 0 AND NEW.building_number IS NULL THEN
+	NEW.full_address = NEW.full_address || NEW.pao_start_number || ', ';
+  END IF;
+  IF NEW.street_description IS NOT NULL AND length(NEW.street_description) > 0 THEN
+	NEW.full_address = NEW.full_address || NEW.street_description || ', ';
+  END IF;
+
+  NEW.full_address = NEW.full_address || NEW.town_name || ', ';
 
   IF NEW.double_dependent_locality IS NOT NULL AND length(NEW.double_dependent_locality) > 0 THEN
 	NEW.full_address = NEW.full_address || NEW.double_dependent_locality || ', ';
@@ -50,7 +57,7 @@ BEGIN
 	NEW.full_address = NEW.full_address || NEW.dependent_locality || ', ';
   END IF;
 
-  NEW.full_address = NEW.full_address || NEW.postcode;
+  NEW.full_address = NEW.full_address || NEW.postcode_locator;
 
   RETURN NEW;
 END;
