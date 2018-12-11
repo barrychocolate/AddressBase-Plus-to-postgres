@@ -1,21 +1,28 @@
---enable teh extension to use 
+--This creates a cross tab count or properties by country for each postcode
+--This is helpful for identifying cross border postcodes
+
+--enable the extension to use 
 CREATE extension tablefunc;
 
-
---Get a count of UPRNS by country_codes by Postcode locator
+--Get a count of UPRNS by country_codes by Postcode or postcode_locator
 --Use postcode locator as many postcodes are empty
 
-DROP TABLE os_address.pcode_country_counts;
+DROP TABLE IF EXISTS os_address.pcode_country_counts;
 
 select COALESCE(postcode, postcode_locator)as postcode, country, count(UPRN) as property_count
 into os_address.pcode_country_counts
 from os_address.addressbase
 GROUP BY COALESCE(postcode, postcode_locator), country;
 
-
 --Crosstab query that to return one row per postcode
---Only appears to be returning values for column E - need to fix
+
+DROP TABLE IF EXISTS os_address.country_crosstab;
 
 SELECT * 
-FROM crosstab( 'select postcode, country, property_count from os_address.pcode_country_counts') 
-     AS final_result(postcode character(8), E BIGINT, J BIGINT, L BIGINT, M BIGINT, N BIGINT, S BIGINT, W BIGINT);
+INTO os_address.country_crosstab
+FROM crosstab( $$ select postcode, country, property_count from os_address.pcode_country_counts ORDER BY postcode $$ , 
+			 $$ values ('E'), ('J'), ('L'), ('M'), ('N'), ('S'), ('W') $$) 
+     AS final_result(postcode character(8), England BIGINT, No_country BIGINT, Channel_Islands BIGINT, Isle_of_Man BIGINT, Northern_Ireland BIGINT, Scotland BIGINT, Wales BIGINT);
+
+'Remove initial 
+DROP table IF EXISTS  os_address.pcode_country_counts;
