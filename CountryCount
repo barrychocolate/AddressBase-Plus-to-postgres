@@ -1,0 +1,21 @@
+--enable teh extension to use 
+CREATE extension tablefunc;
+
+
+--Get a count of UPRNS by country_codes by Postcode locator
+--Use postcode locator as many postcodes are empty
+
+DROP TABLE os_address.pcode_country_counts;
+
+select COALESCE(postcode, postcode_locator)as postcode, country, count(UPRN) as property_count
+into os_address.pcode_country_counts
+from os_address.addressbase
+GROUP BY COALESCE(postcode, postcode_locator), country;
+
+
+--Crosstab query that to return one row per postcode
+--Only appears to be returning values for column E - need to fix
+
+SELECT * 
+FROM crosstab( 'select postcode, country, property_count from os_address.pcode_country_counts') 
+     AS final_result(postcode character(8), E BIGINT, J BIGINT, L BIGINT, M BIGINT, N BIGINT, S BIGINT, W BIGINT);
