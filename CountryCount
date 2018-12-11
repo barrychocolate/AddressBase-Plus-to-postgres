@@ -24,5 +24,5 @@ FROM crosstab( $$ select postcode, country, property_count from os_address.pcode
 			 $$ values ('E'), ('J'), ('L'), ('M'), ('N'), ('S'), ('W') $$) 
      AS final_result(postcode character(8), England BIGINT, No_country BIGINT, Channel_Islands BIGINT, Isle_of_Man BIGINT, Northern_Ireland BIGINT, Scotland BIGINT, Wales BIGINT);
 
-'Remove initial 
+--Remove initial table as no longer needed
 DROP table IF EXISTS  os_address.pcode_country_counts;
