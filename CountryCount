@@ -26,3 +26,9 @@ FROM crosstab( $$ select postcode, country, property_count from os_address.pcode
 
 --Remove initial table as no longer needed
 DROP table IF EXISTS  os_address.pcode_country_counts;
+
+--Example query to find postcodes with properties in Both England AND Wales
+select * from os_address.country_crosstab WHERE England >0 AND Wales > 0;
+
+--Example query to find postcodes with properties in Both Scotland AND England
+select * from os_address.country_crosstab WHERE Scotland >0 AND England > 0;
