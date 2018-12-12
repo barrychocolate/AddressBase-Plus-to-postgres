@@ -9,10 +9,22 @@ CREATE extension tablefunc;
 
 DROP TABLE IF EXISTS os_address.pcode_country_counts;
 
-select COALESCE(postcode, postcode_locator)as postcode, country, count(UPRN) as property_count
+select 
+	CASE   
+    	WHEN length(postcode)<>0 
+		THEN postcode
+    	ELSE postcode_locator
+	END	   as postcode, 
+country, 
+count(UPRN) as property_count
 into os_address.pcode_country_counts
 from os_address.addressbase
-GROUP BY COALESCE(postcode, postcode_locator), country;
+GROUP BY 	CASE   
+    	WHEN length(postcode)<>0 
+		THEN postcode
+    	ELSE postcode_locator
+		END, 
+	country;
 
 --Crosstab query that to return one row per postcode
 
@@ -24,7 +36,7 @@ FROM crosstab( $$ select postcode, country, property_count from os_address.pcode
 			 $$ values ('E'), ('J'), ('L'), ('M'), ('N'), ('S'), ('W') $$) 
      AS final_result(postcode character(8), England BIGINT, No_country BIGINT, Channel_Islands BIGINT, Isle_of_Man BIGINT, Northern_Ireland BIGINT, Scotland BIGINT, Wales BIGINT);
 
---Remove initial table as no longer needed
+--Remove initial 
 DROP table IF EXISTS  os_address.pcode_country_counts;
 
 --Example query to find postcodes with properties in Both England AND Wales
