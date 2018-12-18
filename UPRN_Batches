@@ -1,0 +1,19 @@
+--This splits the UPRNs into 10 equal sized batches using the ntile function
+--Then identifies the minimum UPRN in each batch
+--This can then be used for processing where the memory and processor requiremetns are to high
+
+--Assign each uprn a batch number from 1 to 10
+select UPRN, 
+       ntile(10) over (order by UPRN asc) batch_number
+Into os_address.temp_Batches
+from  os_address.addressbase ;
+
+--Identify the minimum UPRN in each batch and save the results in os_address.UPRN_Batches
+select batch_number, min(UPRN) 
+INTO os_address.UPRN_Batches
+from os_address.temp_Batches group by batch_number order by batch_number;
+
+-empty then drop the temporary table used in the first step
+truncate table os_address.temp_Batches;
+drop table os_address.temp_Batches;
+
