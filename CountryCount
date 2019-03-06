@@ -83,3 +83,22 @@ select * from os_address.res_country_crosstab WHERE England >0 AND Wales > 0;
 
 --Example query to find postcodes with properties in Both Scotland AND England
 select * from os_address.res_country_crosstab WHERE Scotland >0 AND England > 0;
+
+--Example query to return the UPRN and address data for all residential properties 
+--in postcodes that have properties in both England and Wales
+select 
+b.UPRN,
+b.country, 
+b.sub_building_name,
+b.building_name,
+b.building_number,
+b.street_description,
+b.thoroughfare,
+b.town_name,
+b.post_town,
+b.postcode
+from os_address.res_country_crosstab a
+left join os_address.addressbase b on a.postcode = b.postcode
+WHERE a.England >0 
+AND a.Wales > 0 
+AND b.left(CLASS, 1)= 'R' --This ensures only residential properties are returned
