@@ -105,6 +105,7 @@ LEFT JOIN
 ON
         a.postcode = b.postcode
 WHERE
-        a.England        > 0
-AND     a.Wales          > 0
-AND     LEFT(b.CLASS, 1) = 'R' --This ensures only residential properties are returned
+        a.postcode     <> ''
+AND     a.England       >0
+AND     a.Wales         > 0
+AND     LEFT(b.CLASS, 1)= 'R' --This ensures only residential properties are returned
