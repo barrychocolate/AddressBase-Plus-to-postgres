@@ -3,6 +3,10 @@
 -- Create the destination schema if required
 CREATE SCHEMA IF NOT EXISTS os_address;
 
+--Drop table if it already exists
+DROP TABLE
+        IF EXISTS os_address.building_heights
+
 --Create the table
 CREATE TABLE
         os_address.building_heights
