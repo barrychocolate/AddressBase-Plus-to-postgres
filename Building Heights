@@ -27,7 +27,9 @@ CREATE TABLE
 --I used the command line copy function to combine all of the csvs into one file
 --This example would copy all of the csvs in the C:\OS\OS Building Heights\bldhgb_csv\Data directory
 --into a single csv called all_building_heights.csv
-copy "C:\OS\OS Building Heights\bldhgb_csv\Data\*.csv" "C:\OS\OS Building Heights\bldhgb_csv\Data\all_building_heights.csv"
+
+--RUN THIS NEXT COMMAND IN COMMAND PROMPT
+--copy "C:\OS\OS Building Heights\bldhgb_csv\Data\*.csv" "C:\OS\OS Building Heights\bldhgb_csv\Data\all_building_heights.csv"
 
 --Load the building Heights data
 copy os_address.building_heights
