@@ -252,12 +252,7 @@ USING
 CREATE INDEX
         addressbase_postcode_indx
 ON
-        os_address.addressbase
-USING
-        gist
-        (
-                postcode
-        );
+        os_address.addressbase(postcode);
 		
 -- trigger to create points and addresses
 -- This trigger will be executed on each row inserted, calling the function defined above
