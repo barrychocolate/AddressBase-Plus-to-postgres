@@ -8,6 +8,8 @@ copy os_address.nspl (pcd, pcd2, pcds, dointr, doterm, usertype, oseast1m, osnrt
 --Create indexes
 create index nspl_postcode_indx on os_address.NSPL (pcd);
 
+create index nspl_postcode2_indx on os_address.NSPL (pcd2);
+
 create index nspl_OA11_indx on os_address.NSPL (OA11);
 
 create index nspl_LSOA11_indx on os_address.NSPL (LSOA11);
