@@ -224,6 +224,19 @@ CREATE TABLE
                 OIDS=FALSE
         );
 
+
+		
+-- trigger to create points and addresses
+-- This trigger will be executed on each row inserted, calling the function defined above
+CREATE TRIGGER
+        tr_create_geom_and_address BEFORE
+INSERT
+ON
+        os_address.addressbase FOR EACH ROW EXECUTE PROCEDURE create_geom_and_address();
+
+-- Create the indexes using the following code.  
+-- It is more efficient to do this after the data has been loaded into the table
+
 -- Create a pg_trgm index on the full_address column
 -- This will allow super-fast, case-insensitive search on the column
 CREATE EXTENSION
@@ -253,11 +266,3 @@ CREATE INDEX
         addressbase_postcode_indx
 ON
         os_address.addressbase(postcode);
-		
--- trigger to create points and addresses
--- This trigger will be executed on each row inserted, calling the function defined above
-CREATE TRIGGER
-        tr_create_geom_and_address BEFORE
-INSERT
-ON
-        os_address.addressbase FOR EACH ROW EXECUTE PROCEDURE create_geom_and_address();
