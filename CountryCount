@@ -2,7 +2,7 @@
 --This is helpful for identifying cross border postcodes
 
 --enable the extension to use 
-CREATE extension tablefunc;
+CREATE extension IF NOT EXISTS tablefunc ;
 
 --Get a count of UPRNS by country_codes by Postcode or postcode_locator
 --Use postcode locator as many postcodes are empty
@@ -52,7 +52,7 @@ select * from os_address.country_crosstab WHERE Scotland >0 AND England > 0;
 --This is helpful for identifying cross border postcodes
 
 --enable the extension to use 
-CREATE extension tablefunc;
+CREATE extension IF NOT EXISTS tablefunc;
 
 --Get a count of UPRNS by country_codes by Postcode or postcode_locator
 --Use postcode locator as many postcodes are empty
