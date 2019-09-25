@@ -1,4 +1,4 @@
--- DROP TABLE os_address.nspl;
+DROP TABLE IF EXISTS os_address.nspl;
 
 CREATE TABLE os_address.nspl
 (
