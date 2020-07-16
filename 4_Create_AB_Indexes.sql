@@ -30,3 +30,9 @@ CREATE INDEX
         addressbase_postcode_indx
 ON
         os_address.addressbase(postcode);
+        
+        -- Create index on uprn 
+CREATE INDEX
+        addressbase_uprn_indx
+ON
+        os_address.addressbase(uprn);
