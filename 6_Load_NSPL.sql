@@ -3,7 +3,7 @@
 
 --Load csv into the table
 copy os_address.nspl (pcd, pcd2, pcds, dointr, doterm, usertype, oseast1m, osnrth1m, osgrdind, oa11, cty, ced, laua, ward, hlthau, nhser, ctry, rgn, pcon, eer, teclec, ttwa, pct, nuts, park, lsoa11, msoa11, wz11, ccg, bua11, buasd11, ru11ind, oac11, lat, "long", lep1, lep2, pfa, imd, calncv, stp
-	) from 'INSERT PATH TO CSV HERE' delimiter ',' quote '"' escape '"' csv;
+	) from 'INSERT PATH TO CSV HERE' delimiter ',' quote '"' escape '"' csv HEADER;
 
 --Create indexes
 create index nspl_postcode_indx on os_address.NSPL (pcd);
