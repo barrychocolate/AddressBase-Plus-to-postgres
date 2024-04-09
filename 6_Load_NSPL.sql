@@ -2,8 +2,44 @@
 -- https://geoportal.statistics.gov.uk/search?collection=Dataset&sort=name&tags=PRD_NSPL
 
 --Load csv into the table
-copy os_address.nspl (pcd, pcd2, pcds, dointr, doterm, usertype, oseast1m, osnrth1m, osgrdind, oa11, cty, ced, laua, ward, hlthau, nhser, ctry, rgn, pcon, eer, teclec, ttwa, pct, nuts, park, lsoa11, msoa11, wz11, ccg, bua11, buasd11, ru11ind, oac11, lat, "long", lep1, lep2, pfa, imd, calncv, stp
-	) from 'INSERT PATH TO CSV HERE' delimiter ',' quote '"' escape '"' csv HEADER;
+copy os_address.nspl (
+	pcd,
+	pcd2,
+	pcds,
+	dointr,
+	doterm,
+	usertype,
+	oseast1m,
+	osnrth1m,
+	osgrdind,
+	oa21,
+	cty,
+	ced,
+	laua,
+	ward,
+	nhser,
+	ctry,
+	rgn,
+	pcon,
+	ttwa,
+	itl,
+	npark,
+	lsoa21,
+	msoa21,
+	wz11,
+	sicbl,
+	bua22,
+	ru11ind,
+	oac11,
+	lat,
+	"long",
+	lep1,
+	lep2,
+	pfa,
+	imd,
+	icb
+
+) from 'C:\temp\OS\NSPL_2021_FEB_2024_UK\Data\NSPL21_FEB_2024_UK.csv' delimiter ',' quote '"' escape '"' csv HEADER;
 
 --Create indexes
 create index nspl_postcode_indx on os_address.NSPL (pcd);
@@ -12,11 +48,11 @@ create index nspl_postcode2_indx on os_address.NSPL (pcd2);
 
 create index nspl_postcodes_indx on os_address.NSPL (pcds);
 
-create index nspl_OA11_indx on os_address.NSPL (OA11);
+create index nspl_OA21_indx on os_address.NSPL (OA21);
 
-create index nspl_LSOA11_indx on os_address.NSPL (LSOA11);
+create index nspl_LSOA21_indx on os_address.NSPL (LSOA21);
 
-create index nspl_MSOA11_indx on os_address.NSPL (MSOA11);
+create index nspl_MSOA21_indx on os_address.NSPL (MSOA21);
 
 create index nspl_WZ11_indx on os_address.NSPL (WZ11);
 
