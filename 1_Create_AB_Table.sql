@@ -5,7 +5,7 @@ CREATE EXTENSION  IF NOT EXISTS postgis;
 CREATE SCHEMA IF NOT EXISTS os_address;
 
 --DROP TABLE IF IT EXISTS ALREADY
-DROP TABLE IF EXISTS os_address.addressbase;
+DROP TABLE IF EXISTS os_address.addressbase CASCADE;
 
 
 -- Create a function which will populate the full_address and geom columns as
